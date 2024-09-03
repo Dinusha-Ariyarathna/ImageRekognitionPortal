@@ -1,13 +1,9 @@
-package com.example.portal.service.service;
+package com.example.portal.service.service.impl;
 
-import com.example.portal.service.config.AwsConfig;
 import com.example.portal.service.model.ItemDetails;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.portal.service.service.RecognitionService;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
 import software.amazon.awssdk.services.rekognition.model.DetectLabelsRequest;
 import software.amazon.awssdk.services.rekognition.model.DetectLabelsResponse;
@@ -18,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @AUTHOR : Dinusha Ariyarathna
@@ -26,7 +21,7 @@ import java.util.stream.Collectors;
  * @PROJECT : portal.service
  */
 @Service
-public class RecognitionServiceImpl {
+public class RecognitionServiceImpl implements RecognitionService {
 
     private final RekognitionClient rekognitionClient;
 
@@ -43,7 +38,7 @@ public class RecognitionServiceImpl {
         DetectLabelsRequest request = DetectLabelsRequest.builder()
                 .image(image)
                 .maxLabels(10)
-                .minConfidence(75F)
+                .minConfidence(98.8F)
                 .build();
 
         DetectLabelsResponse response = rekognitionClient.detectLabels(request);
@@ -60,5 +55,15 @@ public class RecognitionServiceImpl {
             list.add(item);
         }
         return list;
+    }
+
+    // New method to check if the detected labels contain the target object
+    public boolean isTargetObjectDetected(List<ItemDetails> items, String targetObjectName, float requiredConfidence) {
+        for (ItemDetails item : items) {
+            if (item.getName().equalsIgnoreCase(targetObjectName) && Float.parseFloat(item.getConfidence()) >= requiredConfidence) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -2,7 +2,8 @@ package com.example.portal.service.controller;
 
 
 import com.example.portal.service.model.ItemDetails;
-import com.example.portal.service.service.RecognitionServiceImpl;
+import com.example.portal.service.service.RecognitionService;
+import com.example.portal.service.service.impl.RecognitionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.rekognition.RekognitionClient;
-import software.amazon.awssdk.services.rekognition.model.Label;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
 public class ImageAnalysisController {
 
     @Autowired
-    RecognitionServiceImpl recognitionService;
+    RecognitionService recognitionService;
 
     @PostMapping("/analyze")
     public ResponseEntity<List<ItemDetails>> analyzeImage(@RequestParam("file") MultipartFile file) {
